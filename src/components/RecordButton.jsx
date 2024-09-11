@@ -1,3 +1,4 @@
+import { CirclePause, Mic } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 export const RecordButton = () => {
@@ -89,17 +90,18 @@ export const RecordButton = () => {
     <div>
       <button
         onClick={handleToggleRecording}
-        className={`bg-red-400 hover:opacity-80 text-white font-bold py-2 px-4 rounded`}
+        className={`bg-white hover:opacity-80 text-white font-bold p-4 rounded-full border-8 border-[#ff0000]/20`}
       >
         {isRecording ? (
           <>
-            <span className={`mr-3 ${isRecording && "animate-pulse"}`}>●</span>{" "}
-            Stop Recording
+            {/* <span className={`mr-3 ${isRecording && "animate-pulse"}`}>●</span>{" "}
+            Stop Recording */}
+            <CirclePause />
           </>
         ) : audioBlob ? (
-          "Redo recording"
+          <CirclePause />
         ) : (
-          "Start Recording"
+          <Mic className="text-blue-600" />
         )}
       </button>
       <div>
