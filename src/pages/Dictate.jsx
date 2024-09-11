@@ -3,7 +3,7 @@ import React from 'react'
 const Dictate = () => {
   return (
     <div>
-      
+     
     </div>
   )
 }
