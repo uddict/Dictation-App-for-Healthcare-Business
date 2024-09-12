@@ -1,50 +1,59 @@
 import { CirclePause, Mic } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import WaveSurfer from "wavesurfer.js";
-import MicrophonePlugin from "wavesurfer.js/dist/plugin/wavesurfer.microphone.min.js";
-import { TranscriptionServiceClient } from "./generated/your_service_grpc_web_pb"; // Import generated client
-import {
-  TranscriptionRequest,
-  AudioMessage,
-} from "./generated/your_service_pb"; // Import generated message types
 
 export const RecordButton = () => {
   const [isRecording, setIsRecording] = useState(false);
-  const [audioChunks, setAudioChunks] = useState([]);
+  const [audioStream, setAudioStream] = useState(null);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [audioBlob, setAudioBlob] = useState(null);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [waveSurfer, setWaveSurfer] = useState(null); // Add WaveSurfer state
   const timerRef = useRef(null);
-  const waveSurferRef = useRef(null);
+  const waveSurferRef = useRef(null); // Ref for WaveSurfer container
   const RECORDING_MAX_DURATION = 240; // 4 minutes in seconds
 
-  // Initialize gRPC client
-  const grpcClient = new TranscriptionServiceClient("http://localhost:8080"); // Adjust to your server URL
-
   useEffect(() => {
+    // Initialize WaveSurfer
     if (!waveSurferRef.current) {
       waveSurferRef.current = WaveSurfer.create({
-        container: "#waveform",
-        waveColor: "#007299",
-        progressColor: "#56E0E0",
-        cursorColor: "#FF0000",
-        plugins: [
-          MicrophonePlugin.create({
-            bufferSize: 1024,
-            numberOfInputChannels: 1,
-            numberOfOutputChannels: 1,
-            constraints: {
-              audio: true,
-            },
-          }),
-        ],
+        container: "#waveform", // WaveSurfer container element
+        waveColor: "#007299", // Wave color
+        progressColor: "#56E0E0", // Progress color
+        cursorColor: "#FF0000", // Cursor color
+        backend: "MediaElement", // Use MediaElement for live recording
+        mediaControls: false, // No default media controls
       });
+      setWaveSurfer(waveSurferRef.current);
+    }
 
-      waveSurferRef.current.microphone.on("deviceReady", (stream) => {
-        console.log("Device ready!", stream);
-      });
+    if (!audioStream) {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          setAudioStream(stream);
+          const mediaRecorder = new MediaRecorder(stream);
+          setMediaRecorder(mediaRecorder);
+          let audio;
 
-      waveSurferRef.current.microphone.on("deviceError", (code) => {
-        console.warn("Device error: ", code);
-      });
+          mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+              audio = [event.data];
+            }
+          };
+
+          mediaRecorder.onstop = (event) => {
+            const b = new Blob(audio, { type: "audio/wav" });
+            setAudioBlob(b);
+            console.log("audioBlob", b);
+
+            // Load audio blob to WaveSurfer for playback
+            waveSurfer.load(URL.createObjectURL(b));
+          };
+        })
+        .catch((error) => {
+          console.error("Error accessing microphone:", error);
+        });
     }
 
     return () => {
@@ -52,10 +61,10 @@ export const RecordButton = () => {
         clearInterval(timerRef.current);
       }
       if (waveSurferRef.current) {
-        waveSurferRef.current.destroy();
+        waveSurferRef.current.destroy(); // Clean up WaveSurfer on component unmount
       }
     };
-  }, []);
+  }, [audioStream]);
 
   const handleToggleRecording = (event) => {
     event.preventDefault();
@@ -67,14 +76,10 @@ export const RecordButton = () => {
   };
 
   const startRecording = () => {
+    mediaRecorder.start();
     setIsRecording(true);
     setRecordingTime(0);
-    setAudioChunks([]);
-
-    if (waveSurferRef.current && waveSurferRef.current.microphone) {
-      waveSurferRef.current.microphone.start();
-    }
-
+    setAudioBlob(null);
     timerRef.current = setInterval(() => {
       setRecordingTime((prevTime) => {
         if (prevTime >= RECORDING_MAX_DURATION - 1) {
@@ -84,61 +89,29 @@ export const RecordButton = () => {
         return prevTime + 1;
       });
     }, 1000);
+
+    // Add audio stream to WaveSurfer for real-time visualization
+    waveSurfer.microphone.start();
   };
 
   const stopRecording = () => {
+    mediaRecorder.stop();
     setIsRecording(false);
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
 
-    if (waveSurferRef.current && waveSurferRef.current.microphone) {
-      waveSurferRef.current.microphone.stop();
-    }
-
-    // Send recorded audio to gRPC server
-    if (audioChunks.length > 0) {
-      sendAudioStreamToGrpcServer(audioChunks);
-    }
+    // Stop WaveSurfer microphone input
+    waveSurfer.microphone.stop();
   };
 
-  const sendAudioStreamToGrpcServer = (chunks) => {
-    const stream = grpcClient.transcribe();
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
 
-    // Metadata for the transcription request
-    const language = "en-IN";
-    const domain = "HEALTHCARE";
-    const userId = uuidv4();
-
-    chunks.forEach((chunk) => {
-      const audioMessage = new AudioMessage();
-      audioMessage.setContent(chunk);
-
-      const request = new TranscriptionRequest();
-      request.setAudio(audioMessage);
-      request.setContext({ lang: language, domain: domain });
-      request.setUser({ id: userId });
-      request.setSession({ id: userId, end: false });
-
-      stream.write(request);
-    });
-
-    stream.end();
-
-    stream.on("data", (response) => {
-      console.log(
-        "Transcription Response:",
-        response.getResult().getTranscription().getText()
-      );
-    });
-
-    stream.on("error", (err) => {
-      console.error("gRPC Error:", err);
-    });
-
-    stream.on("end", () => {
-      console.log("Transcription stream ended.");
-    });
+    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   return (
@@ -158,6 +131,7 @@ export const RecordButton = () => {
         )}
       </button>
       <div>
+        {/* Waveform container */}
         <div id="waveform" className="mt-4"></div>
       </div>
     </div>
