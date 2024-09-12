@@ -94,32 +94,30 @@ export const RecordButton = () => {
       >
         {isRecording ? (
           <>
-            {/* <span className={`mr-3 ${isRecording && "animate-pulse"}`}>●</span>{" "}
-            Stop Recording */}
-            <CirclePause />
+            {/* Recording state: show pause icon */}
+            <CirclePause size={32} className="text-red-600" />
           </>
-        ) : audioBlob ? (
-          <CirclePause />
         ) : (
-          <Mic className="text-blue-600" />
+          // Default state: show microphone icon
+          <Mic size={32} className="text-blue-600" />
         )}
       </button>
       <div>
-        {isRecording && (
+        {/* {isRecording && (
           <div>
             <p>Recording...</p>
             <p>Time: {formatTime(recordingTime)}</p>
           </div>
-        )}
+        )} */}
       </div>
-      {audioBlob && (
+      {/* {audioBlob && (
         <>
           <div>Preview recording before submitting:</div>
           <audio controls>
             <source src={URL.createObjectURL(audioBlob)} type="audio/wav" />
           </audio>
         </>
-      )}
+      )} */}
     </div>
   );
 };
