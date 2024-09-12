@@ -1,3 +1,5 @@
+import DownloadButton from "../components/DownloadButton";
+import SaveButton from "../components/SaveButton";
 import { SoapResponse } from "../lib/data";
 
 const Soap = () => {
@@ -24,7 +26,7 @@ const Soap = () => {
               id={key}
               value={value}
               readOnly
-              className="w-full h-24 border border-[#628FBC] rounded p-2 text-[#628FBC]/90"
+              className="w-full bg-[#E9F6FE]/40 h-24 border border-[#628FBC] rounded p-2 text-[#628FBC]/90"
             />
           ) : (
             <textarea
@@ -33,7 +35,7 @@ const Soap = () => {
               id={key}
               value={value}
               readOnly
-              className="w-full border border-[#628FBC] rounded p-2 text-[#628FBC]/90"
+              className="w-full bg-[#E9F6FE]/40 border border-[#628FBC] rounded p-2 text-[#628FBC]"
             />
           )}
         </div>
@@ -49,6 +51,10 @@ const Soap = () => {
       {Object.entries(SoapResponse.response).map(([key, value]) =>
         renderField(key, value)
       )}
+      <div className="flex flex-row gap-10 py-5 items-center justify-center">
+        <SaveButton />
+        <DownloadButton />
+      </div>
     </div>
   );
 };
