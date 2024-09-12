@@ -1,4 +1,4 @@
-const progressResponse = {
+export const progressResponse = {
     "response": {
       "medications": "RTC-20-MG-Dily for cholesterol management, AlliBi Inhaler as needed for asthma, paracetamol 500 mg per 10 dilute",
       "observation": "bi-weekly visits to his pulmonary to monitor his asthma",
@@ -13,7 +13,7 @@ const progressResponse = {
     }
   };
 
-  const SoapResponse = {
+ export const SoapResponse = {
     "response": {
       "vitals": {
         "vitals": "BP 130/85 mmHg, HR 78 bpm, RR 18 breaths/min, Temp 98.6F, O2 Sat 97%",
