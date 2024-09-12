@@ -27,9 +27,9 @@ const Dictate = () => {
             rows={16}
           ></textarea>
           <div className="flex flex-row gap-10 mb-5">
-            <button className="bg-[#11B3CF] px-5 rounded text-white font-semibold">
+            {/* <button className="bg-[#11B3CF] px-5 rounded text-white font-semibold">
               Save
-            </button>
+            </button> */}
             <RadioButton />
           </div>
         </div>
