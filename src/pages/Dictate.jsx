@@ -6,8 +6,8 @@ import RadioButton from "../components/ui/RadioButtons";
 const Dictate = () => {
   return (
     <div>
-      <div className="flex flex-row justify-between mx-[50px] h-[600px] p-10 mt-[60px] border rounded">
-        <div className="border-2 w-[350px]  rounded-md p-10 flex flex-col justify-between items-center ">
+      <div className="flex flex-row justify-between px-10 py-6 border rounded bg-gradient-to-r from-[#56E0E0] to-[#007299] h-full">
+        <div className="w-[350px] max-h-[600px] rounded-md p-10 flex flex-col justify-between items-center bg-[#E9F6FE]">
           {/* <Visualizer /> */}
           <div>WaveSurfer UI</div>
           <div className="flex flex-col items-center gap-4">
@@ -15,8 +15,8 @@ const Dictate = () => {
             <div>Click on mic to start..</div>
           </div>
         </div>
-        <div className="border-2 w-[750px] flex flex-col items-center gap-[40px] bg-[#E9F6FE] rounded-md">
-          <div className="bg-[#BCEFFF] text-center p-3 w-full text-[24px] font-semibold text-[#172048]">
+        <div className="w-[850px] max-h-[600px] flex flex-col items-center gap-[40px] bg-[#E9F6FE] rounded-md">
+          <div className="bg-[#BCEFFF] text-center p-3 w-full text-[24px] font-semibold text-[#172048] rounded-t-md">
             Transcription
           </div>
           <textarea

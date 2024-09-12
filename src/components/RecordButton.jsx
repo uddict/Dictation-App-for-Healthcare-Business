@@ -90,7 +90,7 @@ export const RecordButton = () => {
     <div>
       <button
         onClick={handleToggleRecording}
-        className={`bg-white hover:opacity-80 text-white font-bold p-4 rounded-full border-8 border-[#ff0000]/20`}
+        className={`bg-white hover:opacity-80 text-white font-bold p-4 rounded-full border-8 border-[#ff0000]/20 shadow-xl`}
       >
         {isRecording ? (
           <>
