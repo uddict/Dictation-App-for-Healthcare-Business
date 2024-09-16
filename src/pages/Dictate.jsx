@@ -6,7 +6,7 @@ import RadioButton from "../components/ui/RadioButtons";
 const Dictate = () => {
   return (
     <div>
-      <div className="flex flex-row justify-between px-10 py-6 border rounded bg-gradient-to-r from-[#56E0E0] to-[#007299] h-full">
+      <div className="flex flex-row justify-between px-10 py-6 border rounded bg-[url('./assets/Transcriptionbg.jpeg')] bg-no-repeat bg-cover h-full">
         <div className="w-[350px] max-h-[600px] rounded-md p-10 flex flex-col justify-between items-center bg-[#E9F6FE]">
           {/* <Visualizer /> */}
           <div>WaveSurfer UI</div>
