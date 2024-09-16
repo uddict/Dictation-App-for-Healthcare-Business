@@ -1,6 +1,27 @@
-import DownloadButton from "../components/DownloadButton";
-import SaveButton from "../components/SaveButton";
+import React from 'react';
+import { 
+  Card, CardContent, CardHeader, 
+  Typography, TextField, Button, 
+  Box, Container, ThemeProvider, createTheme 
+} from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import DownloadIcon from '@mui/icons-material/Download';
 import { SoapResponse } from "../lib/data";
+
+// Create a custom theme
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#00897b', // teal
+    },
+    secondary: {
+      main: '#4db6ac', // light teal
+    },
+    background: {
+      default: '#e0f2f1', // very light teal
+    },
+  },
+});
 
 const Soap = () => {
   const renderField = (key, value, depth = 0) => {
@@ -10,52 +31,78 @@ const Soap = () => {
 
     if (typeof value === "object" && value !== null) {
       return (
-        <div key={key} className={`space-y-2 ${depth > 0 ? "ml-4" : ""}`}>
-          <h3 className="text-lg font-semibold mt-4">{labelText}</h3>
-          {Object.entries(value).map(([subKey, subValue]) =>
-            renderField(subKey, subValue, depth + 1)
-          )}
-        </div>
+        <Card key={key} variant="outlined" sx={{ mt: 2, ml: depth * 2 }}>
+          <CardHeader 
+            title={
+              <Typography variant="h6" color="primary">
+                {labelText}
+              </Typography>
+            } 
+          />
+          <CardContent>
+            {Object.entries(value).map(([subKey, subValue]) =>
+              renderField(subKey, subValue, depth + 1)
+            )}
+          </CardContent>
+        </Card>
       );
     } else {
       return (
-        <div key={key} className="space-y-2 text-[#172048]">
-          <label htmlFor={key}>{labelText}:</label>
-          {value.length > 100 ? (
-            <textarea
-              id={key}
-              value={value}
-              readOnly
-              className="w-full bg-[#E9F6FE]/40 h-24 border border-[#628FBC] rounded p-2 text-[#628FBC]/90"
-            />
-          ) : (
-            <textarea
-              type="text"
-              rows={4}
-              id={key}
-              value={value}
-              readOnly
-              className="w-full bg-[#E9F6FE]/40 border border-[#628FBC] rounded p-2 text-[#628FBC]"
-            />
-          )}
-        </div>
+        <Box key={key} sx={{ mb: 2 }}>
+          <Typography variant="subtitle1" color="primary" gutterBottom>
+            {labelText}:
+          </Typography>
+          <TextField
+            fullWidth
+            variant="outlined"
+            value={value}
+            multiline
+            rows={value.length > 100 ? 4 : 2}
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+        </Box>
       );
     }
   };
 
   return (
-    <div className="space-y-4 mx-[300px]">
-      <div className="bg-[#F4FEFF] text-center text-[18px] py-4 text-[#172048] font-semibold">
-        SOAP Notes
-      </div>
-      {Object.entries(SoapResponse.response).map(([key, value]) =>
-        renderField(key, value)
-      )}
-      <div className="flex flex-row gap-10 py-5 items-center justify-center">
-        <SaveButton />
-        <DownloadButton />
-      </div>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Container maxWidth="md" sx={{ py: 4, bgcolor: 'background.default', minHeight: '100vh' }}>
+        <Card elevation={3}>
+          <CardHeader 
+            title={
+              <Typography variant="h4" align="center" color="#ffffff" gutterBottom>
+                SOAP Notes
+              </Typography>
+            }
+            sx={{ bgcolor: 'primary.light', color: 'primary.contrastText' }}
+          />
+          <CardContent>
+            {Object.entries(SoapResponse.response).map(([key, value]) =>
+              renderField(key, value)
+            )}
+          </CardContent>
+        </Card>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<SaveIcon />}
+          >
+            Save
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={<DownloadIcon />}
+          >
+            Download
+          </Button>
+        </Box>
+      </Container>
+    </ThemeProvider>
   );
 };
 

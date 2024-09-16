@@ -1,39 +1,93 @@
-import DownloadButton from "../components/DownloadButton";
-import SaveButton from "../components/SaveButton";
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  Container,
+  ThemeProvider,
+  createTheme,
+} from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
+import DownloadIcon from "@mui/icons-material/Download";
 import { progressResponse } from "../lib/data";
+
+// Create a custom theme
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#3f51b5", // indigo
+    },
+    secondary: {
+      main: "#7986cb", // light indigo
+    },
+    background: {
+      default: "#e8eaf6", // very light indigo
+    },
+  },
+});
 
 const Progress = () => {
   return (
-    <div>
-      <div className="mx-[200px]">
-        <div className="bg-[#F4FEFF] text-center text-[18px] py-4 text-[#172048] font-semibold">
-          PROGRESS Notes
-        </div>
-        <div>
-          <div className="space-y-4">
+    <ThemeProvider theme={theme}>
+      <Container
+        maxWidth="md"
+        sx={{ py: 4, bgcolor: "background.default", minHeight: "100vh" }}
+      >
+        <Card elevation={3}>
+          <CardHeader
+            title={
+              <Typography
+                variant="h4"
+                align="center"
+                color="#ffffff"
+                gutterBottom
+              >
+                Progress Notes
+              </Typography>
+            }
+            sx={{ bgcolor: "primary.light", color: "primary.contrastText" }}
+          />
+          <CardContent>
             {Object.entries(progressResponse.response).map(([key, value]) => (
-              <div key={key} className="space-y-2">
-                <label htmlFor={key} className="capitalize text-[#172048]">
-                  {key.replace(/_/g, " ")}:
-                </label>
-                <textarea
-                  type="text"
+              <Box key={key} sx={{ mb: 3 }}>
+                <Typography variant="subtitle1" color="primary" gutterBottom>
+                  {key
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, (l) => l.toUpperCase())}
+                  :
+                </Typography>
+                <TextField
+                  fullWidth
+                  multiline
                   rows={4}
-                  id={key}
+                  variant="outlined"
                   value={value}
-                  readOnly
-                  className="w-full bg-[#E9F6FE]/40 border border-[#628FBC] rounded p-2 text-[#628FBC]"
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
-              </div>
+              </Box>
             ))}
-          </div>
-        </div>
-        <div className="flex flex-row gap-10 py-5 items-center justify-center">
-          <SaveButton />
-          <DownloadButton />
-        </div>
-      </div>
-    </div>
+          </CardContent>
+        </Card>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4, gap: 2 }}>
+          <Button variant="contained" color="primary" startIcon={<SaveIcon />}>
+            Save
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={<DownloadIcon />}
+          >
+            Download
+          </Button>
+        </Box>
+      </Container>
+    </ThemeProvider>
   );
 };
 
