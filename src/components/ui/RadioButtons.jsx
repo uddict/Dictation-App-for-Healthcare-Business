@@ -46,7 +46,7 @@ export default function RadioButton() {
         disabled={!selectedValue}
         style={{
           marginTop: "16px",
-          background: "#11B3CF",
+          background: "#03A9F4",
           fontWeight: "semibold",
         }}
       >

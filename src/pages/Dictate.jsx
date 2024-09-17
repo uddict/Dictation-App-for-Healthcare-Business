@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Card,
@@ -6,18 +6,15 @@ import {
   CardHeader,
   Typography,
   TextField,
-  Button,
   Container,
   ThemeProvider,
   createTheme,
   Grid,
-  Paper,
   Fade,
   Zoom,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import MicIcon from "@mui/icons-material/Mic";
-import WavesIcon from "@mui/icons-material/Waves";
+import WaveSurfer from "wavesurfer.js";
 import { RecordButton } from "../components/RecordButton";
 import RadioButton from "../components/ui/RadioButtons";
 
@@ -56,34 +53,106 @@ const GlassCard = styled(Card)({
   background: "rgba(255, 255, 255, 0.8)",
   backdropFilter: "blur(10px)",
   border: "1px solid rgba(255, 255, 255, 0.3)",
-});
-
-const WaveAnimation = styled("div")({
-  width: "100%",
-  height: "100%",
+  height: "100%", // Ensure full height
   display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  "& svg": {
-    animation: "wave 1.5s infinite ease-in-out",
-  },
-  "@keyframes wave": {
-    "0%, 100%": {
-      transform: "scale(1)",
-    },
-    "50%": {
-      transform: "scale(1.2)",
-    },
-  },
+  flexDirection: "column",
 });
 
 const Dictate = () => {
+  const waveformRef = useRef(null);
+  const wavesurferRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const [isRecording, setIsRecording] = useState(false);
+  const [transcription, setTranscription] = useState("");
+
+  useEffect(() => {
+    wavesurferRef.current = WaveSurfer.create({
+      container: waveformRef.current,
+      waveColor: "#4F56DB",
+      progressColor: "#383351",
+      cursorColor: "#383351",
+      barWidth: 3,
+      barRadius: 3,
+      cursorWidth: 1,
+      height: 200,
+      barGap: 3,
+    });
+
+    return () => wavesurferRef.current.destroy();
+  }, []);
+
+  const startRecording = async () => {
+    audioChunksRef.current = [];
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorderRef.current.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/wav",
+        });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        wavesurferRef.current.load(audioUrl);
+      };
+
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+
+      // Start real-time waveform update
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+      const analyser = audioContext.createAnalyser();
+      const source = audioContext.createMediaStreamSource(stream);
+      source.connect(analyser);
+
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+      const updateWaveform = () => {
+        if (isRecording) {
+          analyser.getByteTimeDomainData(dataArray);
+          wavesurferRef.current.loadDecodedBuffer(dataArray);
+          requestAnimationFrame(updateWaveform);
+        }
+      };
+      updateWaveform();
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+    }
+  };
+
+  const stopRecording = () => {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== "inactive"
+    ) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      mediaRecorderRef.current.stream
+        .getTracks()
+        .forEach((track) => track.stop());
+    }
+  };
+
+  const handleRecordToggle = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box
         sx={{
-          background: "linear-gradient(45deg, #3f51b5 0%, #00bcd4 100%)",
-          minHeight: "100vh",
+          background: "#F4FEFF",
+          minHeight: "90vh",
           py: 6,
           display: "flex",
           alignItems: "center",
@@ -91,41 +160,35 @@ const Dictate = () => {
       >
         <Container maxWidth="lg">
           <Fade in={true} timeout={1000}>
-            <Grid container spacing={4}>
+            <Grid container spacing={4} sx={{ height: "600px" }}>
+              {" "}
+              {/* Set a fixed height */}
               {/* Visualizer Card */}
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={4} sx={{ height: "100%" }}>
                 <Zoom in={true} style={{ transitionDelay: "500ms" }}>
                   <GlassCard>
+                    <CardHeader
+                      title="Audio Visualizer"
+                      sx={{
+                        bgcolor: "primary.main",
+                        color: "primary.contrastText",
+                        textAlign: "center",
+                        py: 2,
+                      }}
+                    />
                     <CardContent
                       sx={{
-                        height: 400,
+                        flexGrow: 1,
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
-                        alignItems: "center",
+                        
                       }}
                     >
-                      <Typography variant="h5" color="primary" gutterBottom>
-                        Audio Visualizer
-                      </Typography>
-                      <Paper
-                        elevation={0}
-                        sx={{
-                          width: "100%",
-                          height: 200,
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          bgcolor: "transparent",
-                        }}
-                      >
-                        <WaveAnimation>
-                          <WavesIcon
-                            color="primary"
-                            style={{ fontSize: 100 }}
-                          />
-                        </WaveAnimation>
-                      </Paper>
+                      <Box
+                        ref={waveformRef}
+                        sx={{ width: "100%", height: "200px" }}
+                      />
                       <Box
                         sx={{
                           mt: 2,
@@ -134,21 +197,25 @@ const Dictate = () => {
                           alignItems: "center",
                         }}
                       >
-                        <RecordButton />
+                        <RecordButton
+                          onClick={handleRecordToggle}
+                          isRecording={isRecording}
+                        />
                         <Typography
                           variant="body2"
                           sx={{ mt: 1, fontStyle: "italic" }}
                         >
-                          Click to start recording
+                          {isRecording
+                            ? "Recording..."
+                            : "Click to start recording"}
                         </Typography>
                       </Box>
                     </CardContent>
                   </GlassCard>
                 </Zoom>
               </Grid>
-
               {/* Transcription Card */}
-              <Grid item xs={12} md={8}>
+              <Grid item xs={12} md={8} sx={{ height: "100%" }}>
                 <Zoom in={true} style={{ transitionDelay: "700ms" }}>
                   <GlassCard>
                     <CardHeader
@@ -160,20 +227,29 @@ const Dictate = () => {
                         py: 2,
                       }}
                     />
-                    <CardContent>
+                    <CardContent
+                      sx={{
+                        flexGrow: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
                       <TextField
                         fullWidth
                         multiline
                         rows={14}
                         variant="outlined"
+                        value={transcription}
+                        onChange={(e) => setTranscription(e.target.value)}
                         placeholder="Your transcription will appear here in real-time..."
                         sx={{
                           mb: 2,
+                          flexGrow: 1,
                           "& .MuiOutlinedInput-root": {
                             bgcolor: "background.paper",
-                            "&:hover fieldset": {
-                              borderColor: "secondary.main",
-                            },
+                            // "&:hover fieldset": {
+                            //   borderColor: "secondary.main",
+                            // },
                           },
                         }}
                       />
