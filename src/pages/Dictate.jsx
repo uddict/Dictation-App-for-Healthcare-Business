@@ -61,7 +61,7 @@ const Dictate = () => {
       <div className="mx-auto">
         <div className="flex flex-col md:flex-row justify-center items-center gap-8 h-[600px]">
           {/* Visualizer Card */}
-          <div className="min-w-[300px] md:min-w-[500px] bg-indigo-50 bg-opacity-80 backdrop-blur-md border border-indigo-200 rounded-lg shadow-lg p-6 flex flex-col justify-between h-full">
+          <div className="min-w-[300px] md:min-w-[400px] bg-indigo-50 bg-opacity-80 backdrop-blur-md border border-indigo-200 rounded-lg shadow-lg p-6 flex flex-col justify-between h-full">
             <div className="bg-indigo-500 text-white text-center py-2 rounded-md">
               <h2 className="text-xl font-semibold">Audio Recorder</h2>
             </div>
@@ -77,7 +77,7 @@ const Dictate = () => {
           </div>
 
           {/* Transcription Card */}
-          <div className="min-w-[400px] md:w-[600px] bg-indigo-50 bg-opacity-80 backdrop-blur-md border border-indigo-200 rounded-lg shadow-lg p-6 flex flex-col h-full">
+          <div className="min-w-[400px] md:w-[800px] bg-indigo-50 bg-opacity-80 backdrop-blur-md border border-indigo-200 rounded-lg shadow-lg p-6 flex flex-col h-full">
             <div className="bg-indigo-500 text-white text-center py-2 rounded-md">
               <h2 className="text-xl font-semibold">Real-Time Transcription</h2>
             </div>
