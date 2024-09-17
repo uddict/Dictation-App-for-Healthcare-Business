@@ -82,7 +82,7 @@ const Dictate = () => {
               <h2 className="text-xl font-semibold">Real-Time Transcription</h2>
             </div>
             <textarea
-              className="w-full h-full mt-4 p-4 bg-[#F4FEFF] border border-gray-300 rounded-lg resize-none"
+              className="w-full h-full mt-4 p-4 bg-[#F4FEFF] border border-indigo-300 rounded-lg resize-none"
               value={transcription}
               onChange={(e) => setTranscription(e.target.value)}
               placeholder="Your transcription will appear here in real-time..."
