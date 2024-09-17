@@ -57,8 +57,8 @@ const Dictate = () => {
   };
 
   return (
-    <div className="bg-[#F4FEFF] h-[90vh] w-[100vh] flex items-center py-6">
-      <div className="container mx-auto">
+    <div className="bg-[#F4FEFF] h-[90vh] w-screen flex justify-center items-center py-6">
+      <div className="mx-auto">
         <div className="flex flex-col md:flex-row justify-center items-center gap-8 h-[600px]">
           {/* Visualizer Card */}
           <div className="min-w-[300px] md:min-w-[500px] bg-white bg-opacity-80 backdrop-blur-md border border-white rounded-lg shadow-lg p-6 flex flex-col justify-between h-full">
@@ -77,7 +77,7 @@ const Dictate = () => {
           </div>
 
           {/* Transcription Card */}
-          <div className="min-w-[400px] md:min-w-[800px] bg-white bg-opacity-80 backdrop-blur-md border border-white rounded-lg shadow-lg p-6 flex flex-col h-full">
+          <div className="min-w-[400px] md:w-[600px] bg-white bg-opacity-80 backdrop-blur-md border border-white rounded-lg shadow-lg p-6 flex flex-col h-full">
             <div className="bg-indigo-600 text-white text-center py-2 rounded-md">
               <h2 className="text-xl font-semibold">Real-Time Transcription</h2>
             </div>
