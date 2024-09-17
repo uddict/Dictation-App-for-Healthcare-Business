@@ -57,7 +57,7 @@ const Dictate = () => {
   };
 
   return (
-    <div className="bg-[#F4FEFF] h-[90vh] w-screen flex items-center py-6">
+    <div className="bg-[#F4FEFF] h-[90vh] w-[100vh] flex items-center py-6">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-center items-center gap-8 h-[600px]">
           {/* Visualizer Card */}
