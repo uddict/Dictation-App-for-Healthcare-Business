@@ -57,12 +57,12 @@ const Dictate = () => {
   };
 
   return (
-    <div className="bg-[#F4FEFF] h-[90vh] w-screen flex justify-center items-center py-6">
+    <div className="bg-[#ffffff] h-[90vh] w-screen flex justify-center items-center py-6">
       <div className="mx-auto">
         <div className="flex flex-col md:flex-row justify-center items-center gap-8 h-[600px]">
           {/* Visualizer Card */}
-          <div className="min-w-[300px] md:min-w-[400px] bg-indigo-50 bg-opacity-80 backdrop-blur-md border border-indigo-200 rounded-lg shadow-lg p-6 flex flex-col justify-between h-full">
-            <div className="bg-indigo-500 text-white text-center py-2 rounded-md">
+          <div className="min-w-[300px] md:min-w-[400px] border border-transparent bg-gradient-to-r from-[#9DCEFF]/30 to-[#92A3FD]/30 bg-opacity-80 backdrop-blur-md rounded-lg shadow-lg p-6 flex flex-col justify-between h-full">
+            <div className="bg-gradient-to-r from-[#61b0ff] to-[#6881fd]  text-white text-center py-2 rounded-md">
               <h2 className="text-xl font-semibold">Audio Recorder</h2>
             </div>
             <div className="mt-2 flex flex-col items-center">
@@ -77,12 +77,12 @@ const Dictate = () => {
           </div>
 
           {/* Transcription Card */}
-          <div className="min-w-[400px] md:w-[800px] bg-indigo-50 bg-opacity-80 backdrop-blur-md border border-indigo-200 rounded-lg shadow-lg p-6 flex flex-col h-full">
-            <div className="bg-indigo-500 text-white text-center py-2 rounded-md">
+          <div className="min-w-[400px] md:w-[800px] bg-gradient-to-r from-[#9DCEFF]/30 to-[#92A3FD]/30 bg-opacity-80 backdrop-blur-md border border-transparent rounded-lg shadow-lg p-6 flex flex-col h-full">
+            <div className="bg-gradient-to-r from-[#61b0ff] to-[#6881fd] text-white text-center py-2 rounded-md">
               <h2 className="text-xl font-semibold">Real-Time Transcription</h2>
             </div>
             <textarea
-              className="w-full h-full mt-4 p-4 bg-[#F4FEFF] border border-indigo-300 rounded-lg resize-none"
+              className="w-full h-full mt-4 p-4 bg-[#ffffff] border border-indigo-300 rounded-lg resize-none"
               value={transcription}
               onChange={(e) => setTranscription(e.target.value)}
               placeholder="Your transcription will appear here in real-time..."

@@ -1,7 +1,9 @@
+import React from "react";
+
 const Header = () => {
   return (
-    <div className="bg-indigo-300 shadow-sm text-[#172048] py-3 text-center text-[26px] font-semibold">
-      Dictation HealthCare
+    <div className="bg-gradient-to-r from-[#7dbeff] to-[#6781ff] shadow-md text-[#1D1617] py-4 text-center">
+      <h1 className="text-2xl font-semibold">Dictation HealthCare</h1>
     </div>
   );
 };

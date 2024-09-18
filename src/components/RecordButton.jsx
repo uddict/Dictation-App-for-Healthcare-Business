@@ -118,16 +118,16 @@ export const RecordButton = () => {
     <div>
       <button
         onClick={handleToggleRecording}
-        className={`bg-white hover:opacity-80 text-white font-bold p-4 rounded-full border-8 border-[#ff0000]/20 shadow-xl`}
+        className={`bg-gradient-to-r from-[#80bfff] to-[#738aff] hover:opacity-80 text-white font-bold p-4 rounded-full shadow-2xl shadow-purple-900`}
       >
         {isRecording ? (
           <>
             {/* Recording state: show pause icon */}
-            <CirclePause size={32} className="text-red-600" />
+            <CirclePause size={32} className="text-red-400" />
           </>
         ) : (
           // Default state: show microphone icon
-          <Mic size={32} className="text-blue-600" />
+          <Mic size={32} className="text-white" />
         )}
       </button>
       <div>
