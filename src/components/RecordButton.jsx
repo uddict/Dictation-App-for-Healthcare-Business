@@ -1,138 +1,107 @@
+import React, { useState, useEffect, useRef } from "react";
 import { CirclePause, Mic } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
-import WaveSurfer from "wavesurfer.js";
+import AudioAnalyser from "react-audio-analyser";
 
 export const RecordButton = () => {
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioStream, setAudioStream] = useState(null);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [audioBlob, setAudioBlob] = useState(null);
+  const [status, setStatus] = useState("");
+  const [audioSrc, setAudioSrc] = useState("");
   const [recordingTime, setRecordingTime] = useState(0);
-  const [waveSurfer, setWaveSurfer] = useState(null); // Add WaveSurfer state
   const timerRef = useRef(null);
-  const waveSurferRef = useRef(null); // Ref for WaveSurfer container
   const RECORDING_MAX_DURATION = 240; // 4 minutes in seconds
 
   useEffect(() => {
-    // Initialize WaveSurfer
-    if (!waveSurferRef.current) {
-      waveSurferRef.current = WaveSurfer.create({
-        container: "#waveform", // WaveSurfer container element
-        waveColor: "#007299", // Wave color
-        progressColor: "#56E0E0", // Progress color
-        cursorColor: "#FF0000", // Cursor color
-        backend: "MediaElement", // Use MediaElement for live recording
-        mediaControls: false, // No default media controls
-      });
-      setWaveSurfer(waveSurferRef.current);
-    }
-
-    if (!audioStream) {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then((stream) => {
-          setAudioStream(stream);
-          const mediaRecorder = new MediaRecorder(stream);
-          setMediaRecorder(mediaRecorder);
-          let audio;
-
-          mediaRecorder.ondataavailable = (event) => {
-            if (event.data.size > 0) {
-              audio = [event.data];
-            }
-          };
-
-          mediaRecorder.onstop = (event) => {
-            const b = new Blob(audio, { type: "audio/wav" });
-            setAudioBlob(b);
-            console.log("audioBlob", b);
-
-            // Load audio blob to WaveSurfer for playback
-            waveSurfer.load(URL.createObjectURL(b));
-          };
-        })
-        .catch((error) => {
-          console.error("Error accessing microphone:", error);
-        });
-    }
-
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
-      if (waveSurferRef.current) {
-        waveSurferRef.current.destroy(); // Clean up WaveSurfer on component unmount
-      }
     };
-  }, [audioStream]);
+  }, []);
+
+  const controlAudio = (status) => {
+    setStatus(status);
+    if (status === "recording") {
+      setRecordingTime(0);
+      timerRef.current = setInterval(() => {
+        setRecordingTime((prevTime) => {
+          if (prevTime >= RECORDING_MAX_DURATION - 1) {
+            setStatus("inactive");
+            clearInterval(timerRef.current);
+            return RECORDING_MAX_DURATION;
+          }
+          return prevTime + 1;
+        });
+      }, 1000);
+    } else {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    }
+  };
 
   const handleToggleRecording = (event) => {
     event.preventDefault();
-    if (isRecording) {
-      stopRecording();
+    if (status === "recording") {
+      controlAudio("inactive");
     } else {
-      startRecording();
+      controlAudio("recording");
     }
   };
 
-  const startRecording = () => {
-    mediaRecorder.start();
-    setIsRecording(true);
-    setRecordingTime(0);
-    setAudioBlob(null);
-    timerRef.current = setInterval(() => {
-      setRecordingTime((prevTime) => {
-        if (prevTime >= RECORDING_MAX_DURATION - 1) {
-          stopRecording();
-          return RECORDING_MAX_DURATION;
-        }
-        return prevTime + 1;
-      });
-    }, 1000);
-
-    // Add audio stream to WaveSurfer for real-time visualization
-    waveSurfer.microphone.start();
-  };
-
-  const stopRecording = () => {
-    mediaRecorder.stop();
-    setIsRecording(false);
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-
-    // Stop WaveSurfer microphone input
-    waveSurfer.microphone.stop();
+  const audioProps = {
+    audioType: "audio/wav",
+    status: status,
+    audioSrc: audioSrc,
+    timeslice: 1000,
+    startCallback: (e) => {
+      console.log("succ start", e);
+    },
+    pauseCallback: (e) => {
+      console.log("succ pause", e);
+    },
+    stopCallback: (e) => {
+      setAudioSrc(window.URL.createObjectURL(e));
+      console.log("succ stop", e);
+    },
+    onRecordCallback: (e) => {
+      console.log("recording", e);
+    },
+    errorCallback: (err) => {
+      console.log("error", err);
+    },
   };
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-
     return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
       .toString()
       .padStart(2, "0")}`;
   };
 
   return (
-    <div>
-      <button
-        onClick={handleToggleRecording}
-        className={`bg-gradient-to-r from-[#80bfff] to-[#738aff] hover:opacity-80 text-white font-bold p-4 rounded-full shadow-2xl shadow-purple-900`}
-      >
-        {isRecording ? (
-          <>
-            {/* Recording state: show pause icon */}
-            <CirclePause size={32} className="text-red-400" />
-          </>
-        ) : (
-          // Default state: show microphone icon
-          <Mic size={32} className="text-white" />
-        )}
-      </button>
+    <div className="flex flex-col items-center gap-[100px]">
+      <div className="w-full min-h-[190px] flex items-center justify-center max-w-md bg-gradient-to-r from-[#9DCEFF]/30 to-[#92A3FD]/30 bg-opacity-80 backdrop-blur-md rounded-lg shadow-lg overflow-hidden">
+        <AudioAnalyser
+          {...audioProps}
+          backgroundColor="transparent"
+          strokeColor="#6781ff"
+          className="w-full h-32"
+        />
+      </div>
       <div>
-        {/* Waveform container */}
-        <div id="waveform" className="mt-4"></div>
+        <button
+          onClick={handleToggleRecording}
+          className="bg-gradient-to-r from-[#80bfff] to-[#738aff] hover:opacity-80 text-white font-bold p-4 rounded-full shadow-xl shadow-purple-200 mb-4 transition-all duration-300 ease-in-out transform hover:scale-105"
+        >
+          {status === "recording" ? (
+            <CirclePause size={32} className="text-red-600" />
+          ) : (
+            <Mic size={32} className="text-white" />
+          )}
+        </button>
+        <div className="text-lg font-semibold mb-2 text-center bg-gradient-to-r from-[#5badff] to-[#6781ff] bg-clip-text text-transparent">
+          {formatTime(recordingTime)}
+        </div>
       </div>
     </div>
   );

@@ -61,7 +61,7 @@ const Dictate = () => {
       <div className="mx-auto">
         <div className="flex flex-col md:flex-row justify-center items-center gap-8 h-[600px]">
           {/* Visualizer Card */}
-          <div className="min-w-[300px] md:min-w-[400px] border border-transparent bg-gradient-to-r from-[#9DCEFF]/30 to-[#92A3FD]/30 bg-opacity-80 backdrop-blur-md rounded-lg shadow-lg p-6 flex flex-col justify-between h-full">
+          <div className="min-w-[300px] md:min-w-[400px] border border-[#9DCEFF] bg-[#ecf5ff] bg-opacity-80 backdrop-blur-md rounded-lg shadow-lg p-6 flex flex-col justify-between h-full">
             <div className="bg-gradient-to-r from-[#61b0ff] to-[#6881fd]  text-white text-center py-2 rounded-md">
               <h2 className="text-xl font-semibold">Audio Recorder</h2>
             </div>
@@ -70,14 +70,14 @@ const Dictate = () => {
                 onClick={handleRecordToggle}
                 isRecording={isRecording}
               />
-              <p className="mt-1 italic text-sm">
+              <p className="mt-1 italic text-sm bg-gradient-to-r from-[#0080ff] to-[#002aff] bg-clip-text text-transparent">
                 {isRecording ? "Recording..." : "Click to start recording"}
               </p>
             </div>
           </div>
 
           {/* Transcription Card */}
-          <div className="min-w-[400px] md:w-[800px] bg-gradient-to-r from-[#9DCEFF]/30 to-[#92A3FD]/30 bg-opacity-80 backdrop-blur-md border border-transparent rounded-lg shadow-lg p-6 flex flex-col h-full">
+          <div className="min-w-[400px] md:w-[800px] bg-gradient-to-r from-[#9DCEFF]/30 to-[#92A3FD]/30 bg-opacity-80 backdrop-blur-md border border-[#9DCEFF] rounded-lg shadow-lg p-6 flex flex-col h-full">
             <div className="bg-gradient-to-r from-[#61b0ff] to-[#6881fd] text-white text-center py-2 rounded-md">
               <h2 className="text-xl font-semibold">Real-Time Transcription</h2>
             </div>
