@@ -1,4 +1,5 @@
-import React from "react";
+import { useState } from "react";
+
 import {
   Card,
   CardContent,
@@ -31,6 +32,12 @@ const theme = createTheme({
 });
 
 const Progress = () => {
+  const [value, setValue] = useState(""); // Initialize the state
+
+  const handleChange = (event) => {
+    setValue(event.target.value); // Update the state on change
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container
@@ -66,9 +73,7 @@ const Progress = () => {
                   rows={4}
                   variant="outlined"
                   value={value}
-                  InputProps={{
-                    readOnly: true,
-                  }}
+                  onChange={handleChange}
                 />
               </Box>
             ))}
