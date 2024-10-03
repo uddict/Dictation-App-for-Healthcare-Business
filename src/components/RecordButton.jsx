@@ -88,20 +88,25 @@ export const RecordButton = () => {
           className="w-full h-32"
         />
       </div>
-      <div>
-        <button
-          onClick={handleToggleRecording}
-          className="bg-gradient-to-r from-[#80bfff] to-[#738aff] hover:opacity-80 text-white font-bold p-4 rounded-full shadow-xl shadow-purple-200 mb-4 transition-all duration-300 ease-in-out transform hover:scale-105"
-        >
-          {status === "recording" ? (
-            <CirclePause size={32} className="text-red-600" />
-          ) : (
-            <Mic size={32} className="text-white" />
-          )}
-        </button>
-        <div className="text-lg font-semibold mb-2 text-center bg-gradient-to-r from-[#5badff] to-[#6781ff] bg-clip-text text-transparent">
+      <div className="flex flex-col gap-2 items-center">
+        <div>
+          <button
+            onClick={handleToggleRecording}
+            className="bg-gradient-to-r from-[#80bfff] to-[#738aff] hover:opacity-80 text-white font-bold p-4 rounded-full shadow-xl shadow-purple-200 mb-4 transition-all duration-300 ease-in-out transform hover:scale-105"
+          >
+            {status === "recording" ? (
+              <CirclePause size={32} className="text-red-600" />
+            ) : (
+              <Mic size={32} className="text-white" />
+            )}
+          </button>
+          {/* <div className="text-lg font-semibold mb-2 text-center bg-gradient-to-r from-[#5badff] to-[#6781ff] bg-clip-text text-transparent">
           {formatTime(recordingTime)}
+        </div> */}
         </div>
+        <button className="bg-gradient-to-r from-[#80bfff] to-[#738aff] hover:opacity-80 text-white font-bold px-6 py-1.5 rounded-md mb-4 hover:scale-105">
+          Stop Recording
+        </button>
       </div>
     </div>
   );
