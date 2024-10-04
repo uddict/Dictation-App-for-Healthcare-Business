@@ -100,9 +100,9 @@ export const RecordButton = () => {
               <Mic size={32} className="text-white" />
             )}
           </button>
-          {/* <div className="text-lg font-semibold mb-2 text-center bg-gradient-to-r from-[#5badff] to-[#6781ff] bg-clip-text text-transparent">
-          {formatTime(recordingTime)}
-        </div> */}
+          <div className="text-lg font-semibold mb-2 text-center bg-gradient-to-r from-[#5badff] to-[#6781ff] bg-clip-text text-transparent">
+            {formatTime(recordingTime)}
+          </div>
         </div>
         <button className="bg-gradient-to-r from-[#80bfff] to-[#738aff] hover:opacity-80 text-white font-bold px-6 py-1.5 rounded-md mb-4 hover:scale-105">
           Stop Recording
