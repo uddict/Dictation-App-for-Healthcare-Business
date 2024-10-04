@@ -19,13 +19,13 @@ import { SoapResponse } from "../lib/data";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#3f51b5", // indigo
+      main: "#3f51b5", // indigo color
     },
     secondary: {
-      main: "#7986cb", // light indigo
+      main: "#7986cb", // light indigo color
     },
     background: {
-      default: "#e8eaf6", // very light indigo
+      default: "#e8eaf6", // very light indigo color
     },
   },
 });
