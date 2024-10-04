@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -32,10 +31,13 @@ const theme = createTheme({
 });
 
 const Progress = () => {
-  const [value, setValue] = useState(""); // Initialize the state
+  const [editedValues, setEditedValues] = useState(progressResponse.response);
 
-  const handleChange = (event) => {
-    setValue(event.target.value); // Update the state on change
+  const handleInputChange = (key, value) => {
+    setEditedValues((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
   };
 
   return (
@@ -59,7 +61,7 @@ const Progress = () => {
             sx={{ bgcolor: "primary.light", color: "primary.contrastText" }}
           />
           <CardContent>
-            {Object.entries(progressResponse.response).map(([key, value]) => (
+            {Object.entries(editedValues).map(([key, value]) => (
               <Box key={key} sx={{ mb: 3 }}>
                 <Typography variant="subtitle1" color="primary" gutterBottom>
                   {key
@@ -73,7 +75,7 @@ const Progress = () => {
                   rows={4}
                   variant="outlined"
                   value={value}
-                  onChange={handleChange}
+                  onChange={(e) => handleInputChange(key, e.target.value)}
                 />
               </Box>
             ))}

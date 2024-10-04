@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -19,19 +19,38 @@ import { SoapResponse } from "../lib/data";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#3f51b5", // indigo color
+      main: "#3f51b5", // indigo
     },
     secondary: {
-      main: "#7986cb", // light indigo color
+      main: "#7986cb", // light indigo
     },
     background: {
-      default: "#e8eaf6", // very light indigo color
+      default: "#e8eaf6", // very light indigo
     },
   },
 });
 
 const Soap = () => {
-  const renderField = (key, value, depth = 0) => {
+  const [soapData, setSoapData] = useState(SoapResponse.response);
+
+  const handleChange = (key, value, parentKey = null) => {
+    if (parentKey) {
+      setSoapData((prevData) => ({
+        ...prevData,
+        [parentKey]: {
+          ...prevData[parentKey],
+          [key]: value,
+        },
+      }));
+    } else {
+      setSoapData((prevData) => ({
+        ...prevData,
+        [key]: value,
+      }));
+    }
+  };
+
+  const renderField = (key, value, depth = 0, parentKey = null) => {
     const labelText = key
       .replace(/_/g, " ")
       .replace(/\b\w/g, (l) => l.toUpperCase());
@@ -48,7 +67,7 @@ const Soap = () => {
           />
           <CardContent>
             {Object.entries(value).map(([subKey, subValue]) =>
-              renderField(subKey, subValue, depth + 1)
+              renderField(subKey, subValue, depth + 1, key)
             )}
           </CardContent>
         </Card>
@@ -63,11 +82,11 @@ const Soap = () => {
             fullWidth
             variant="outlined"
             value={value}
+            onChange={(e) => handleChange(key, e.target.value, parentKey)}
             multiline
             rows={value.length > 100 ? 4 : 2}
-            InputProps={{
-              readOnly: true,
-            }}
+            InputProps={{}}
+            className="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-6175j8"
           />
         </Box>
       );
@@ -95,7 +114,7 @@ const Soap = () => {
             sx={{ bgcolor: "primary.light", color: "primary.contrastText" }}
           />
           <CardContent>
-            {Object.entries(SoapResponse.response).map(([key, value]) =>
+            {Object.entries(soapData).map(([key, value]) =>
               renderField(key, value)
             )}
           </CardContent>
