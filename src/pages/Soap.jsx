@@ -14,9 +14,10 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import DownloadIcon from "@mui/icons-material/Download";
 import { SoapResponse } from "../lib/data";
+import { Link as RouterLink } from "react-router-dom";
 
 // Create a custom theme
-const theme = createTheme({
+export const theme = createTheme({
   palette: {
     primary: {
       main: "#3f51b5", // indigo
