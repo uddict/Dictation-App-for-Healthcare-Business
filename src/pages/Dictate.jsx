@@ -88,7 +88,7 @@ const Dictate = () => {
               placeholder="Your transcription will appear here in real-time..."
             />
             <div className="flex justify-center mt-4">
-              <RadioButton />
+              <RadioButton transcription={transcription} />
             </div>
           </div>
         </div>
