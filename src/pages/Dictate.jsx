@@ -121,7 +121,11 @@ const Dictate = () => {
               readOnly={isProcessing}
             />
             <div className="flex justify-center mt-4">
+<<<<<<< HEAD
               <RadioButton onChange={handleLanguageChange} />
+=======
+              <RadioButton transcription={transcription} />
+>>>>>>> 3e162e73b456e4c4d4c449e0da64890502b32100
             </div>
           </div>
         </div>
