@@ -1,86 +1,83 @@
-const grpc = require("@grpc/grpc-js");
-const protoLoader = require("@grpc/proto-loader");
-const fs = require("fs");
-const { WaveFile } = require("wavefile");
-const { v4: uuidv4 } = require("uuid");
+import uuid from "uuid";
+import grpc from "@grpc/grpc-js";
+import { SpeechToText } from "../protos/speech_to_text_service.proto";
+import { Audio, AudioMetaData } from "../protos/audio.proto";
+import {
+  User,
+  Session,
+  AudioMessage,
+} from "../protos/speech_to_text_model.proto";
+import { SpeechToTextRequest } from "../protos/speech_to_text_service.proto";
 
-// Path to the main proto file (adjust based on your structure)
-const PROTO_PATH = "./protos/speech_to_text.proto";
 
-// Load gRPC proto with all necessary imports
-const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
-  keepCase: true,
-  longs: String,
-  enums: String,
-  defaults: true,
-  oneofs: true,
-  includeDirs: ["./protos"], // Specify the directory that contains all .proto files
-});
-
-// Load the package definition and get the service
-const proto = grpc.loadPackageDefinition(packageDefinition).speech_to_text;
-
-// gRPC server address
-const address = "10.168.131.225:32000";
-const client = new proto.SpeechToText(
-  address,
-  grpc.credentials.createInsecure()
-);
-
-// Function to chunk audio
-function chunkAudio(audioBytes, chunkSize) {
+const chunkAudio = (audioBytes, chunkSize, stride) => {
   const chunks = [];
-  for (let i = 0; i < audioBytes.length; i += chunkSize) {
+  for (let i = 0; i < audioBytes.length; i += chunkSize - stride) {
     chunks.push(audioBytes.slice(i, i + chunkSize));
   }
   return chunks;
-}
+};
 
-// ------MAIN TRANSCRIPTION FUNCTION------
-async function transcribeAudio(filePath) {
-  const wavData = fs.readFileSync(filePath);
-  const wav = new WaveFile(wavData);
-  const audioBytes = wav.data.samples;
+//  -----TRANSCRIPTION METHOD-----
+const transcribeAudioBlob = async (
+  audioBlob,
+  language = "en-IN",
+  domain = "HEALTHCARE"
+) => {
+  try {
+    // Convert blob to audio bytes 
+    const audioBytes = await blobToWavBuffer(audioBlob);
 
-  const id_user = uuidv4(); // Generate unique user ID
-  const language = "en-IN"; // Language
-  const domain = "HEALTHCARE"; // Domain
-  const audioChunks = chunkAudio(audioBytes, 16000); // Audio chunk size
+    // ------gRPC CLIENT SETUP------
+    const endpoint = "10.168.131.225:32000 ";
+    const client = new SpeechToText(
+      endpoint,
+      grpc.credentials.createInsecure()
+    );
 
-  const results = [];
+    const idUser = uuid.v4();
+    const audioChunks = chunkAudio(audioBytes, 16000, 1);
+    const transcripts = [];
 
-  // Loop through chunks and send them to the gRPC server
-  for (let audioChunk of audioChunks) {
-    const audio = { content: audioChunk, uri: "test" };
-    const audio_meta_data = { lang: language, domain: domain };
-    const user = { id: id_user };
-    const session = { id: id_user, end: false };
-
-    const audioMessage = {
-      audio: audio,
-      context: audio_meta_data,
-      user: user,
-      session: session,
-      id: 1,
-    };
-
-    const sttReq = { message: audioMessage };
-
-    await new Promise((resolve, reject) => {
-      client.transcribe([sttReq], (err, response) => {
-        if (err) {
-          console.error("gRPC Error:", err);
-          reject(err);
-        } else {
-          results.push(response.result.transcription.text);
-          resolve();
-        }
+    for (const chunk of audioChunks) {
+      const audio = new Audio({ content: chunk, uri: "test" });
+      const audioMetaData = new AudioMetaData({
+        lang: language,
+        domain: domain,
       });
-    });
+      const user = new User({ id: idUser });
+      const session = new Session({ id: idUser, end: false });
+      const audioMessage = new AudioMessage({
+        audio,
+        context: audioMetaData,
+        user,
+        session,
+        id: 1,
+      });
+      const sttReq = new SpeechToTextRequest({ message: audioMessage });
+
+      /* ----SEND STREAMING REQUEST---- */
+      const responses = await new Promise((resolve, reject) => {
+        const call = client.transcribe(sttReq);
+        const results = [];
+
+        call.on("data", (response) => results.push(response));
+        call.on("end", () => resolve(results));
+        call.on("error", (err) => reject(err));
+      });
+
+      /*   ---TRANSCRIPTION RESULTS---  */
+      responses.forEach((response) => {
+        const transcript = response.result.transcription.text;
+        transcripts.push(transcript);
+        console.log(transcript);
+      });
+    }
+
+    return transcripts.join("\n");
+  } catch (error) {
+    throw new Error(`Transcription failed: ${error.message}`);
   }
+};
 
-  // ----------RETURN THE FINAL TRANSCRIPTION RESULT----------
-  return results.join(" ");
-}
-
-module.exports = transcribeAudio;
+export { transcribeAudioBlob };
