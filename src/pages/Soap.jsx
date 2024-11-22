@@ -13,8 +13,8 @@ import {
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import DownloadIcon from "@mui/icons-material/Download";
-import { SoapResponse } from "../lib/data";
-import { Link as RouterLink } from "react-router-dom";
+// import { SoapResponse } from "../lib/data";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 
 // Create a custom theme
 export const theme = createTheme({
@@ -32,7 +32,9 @@ export const theme = createTheme({
 });
 
 const Soap = () => {
-  const [soapData, setSoapData] = useState(SoapResponse.response);
+  const location = useLocation();
+  const { data } = location.state || {};
+  const [soapData, setSoapData] = useState(data);
 
   const handleChange = (key, value, parentKey = null) => {
     if (parentKey) {
@@ -98,8 +100,7 @@ const Soap = () => {
     <ThemeProvider theme={theme}>
       <Container
         maxWidth="md"
-        sx={{ py: 4, bgcolor: "background.default", minHeight: "100vh" }}
-      >
+        sx={{ py: 4, bgcolor: "background.default", minHeight: "100vh" }}>
         <Card elevation={3}>
           <CardHeader
             title={
@@ -107,8 +108,7 @@ const Soap = () => {
                 variant="h4"
                 align="center"
                 color="#ffffff"
-                gutterBottom
-              >
+                gutterBottom>
                 SOAP Notes
               </Typography>
             }
@@ -127,8 +127,7 @@ const Soap = () => {
           <Button
             variant="contained"
             color="secondary"
-            startIcon={<DownloadIcon />}
-          >
+            startIcon={<DownloadIcon />}>
             Download
           </Button>
         </Box>
