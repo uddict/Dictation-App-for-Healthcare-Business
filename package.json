@@ -29,15 +29,11 @@
     "react-audio-visualize": "^1.2.0",
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
-<<<<<<< HEAD
     "react-router-dom": "^6.26.2",
     "react-speech-recognition": "^3.10.0",
     "regenerator-runtime": "^0.14.1",
     "uuid": "^11.0.3",
     "wavefile": "^11.0.0"
-=======
-    "react-router-dom": "^6.26.2"
->>>>>>> 3e162e73b456e4c4d4c449e0da64890502b32100
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
