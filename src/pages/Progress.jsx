@@ -31,10 +31,12 @@ const theme = createTheme({
 });
 
 const Progress = () => {
-  const [editedValues, setEditedValues] = useState(progressResponse.response);
+  const location = useLocation();
+  const { data } = location.state || {};
+  const [progressData, setProgressData] = useState(data);
 
   const handleInputChange = (key, value) => {
-    setEditedValues((prevState) => ({
+    setProgressData((prevState) => ({
       ...prevState,
       [key]: value,
     }));
@@ -44,8 +46,7 @@ const Progress = () => {
     <ThemeProvider theme={theme}>
       <Container
         maxWidth="md"
-        sx={{ py: 4, bgcolor: "background.default", minHeight: "100vh" }}
-      >
+        sx={{ py: 4, bgcolor: "background.default", minHeight: "100vh" }}>
         <Card elevation={3}>
           <CardHeader
             title={
@@ -53,15 +54,14 @@ const Progress = () => {
                 variant="h4"
                 align="center"
                 color="#ffffff"
-                gutterBottom
-              >
+                gutterBottom>
                 Progress Notes
               </Typography>
             }
             sx={{ bgcolor: "primary.light", color: "primary.contrastText" }}
           />
           <CardContent>
-            {Object.entries(editedValues).map(([key, value]) => (
+            {Object.entries(progressData).map(([key, value]) => (
               <Box key={key} sx={{ mb: 3 }}>
                 <Typography variant="subtitle1" color="primary" gutterBottom>
                   {key
@@ -88,8 +88,7 @@ const Progress = () => {
           <Button
             variant="contained"
             color="secondary"
-            startIcon={<DownloadIcon />}
-          >
+            startIcon={<DownloadIcon />}>
             Download
           </Button>
         </Box>

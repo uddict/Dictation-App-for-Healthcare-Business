@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package speech_to_text;
+
+import "protos/speech/speech_to_text/v2/speech_to_text_model.proto";
+import "protos/core/v1/status.proto";
+
+service SpeechToText {
+  rpc transcribe(stream SpeechToTextRequest) returns (stream SpeechToTextResponse);
+}
+
+message SpeechToTextRequest {
+  protos.speech.core.v2.speech_to_text.v2.AudioMessage message = 1;
+}
+
+message SpeechToTextResponse {
+  protos.speech.core.v2.speech_to_text.v2.SpeechToTextOutput  result = 1;
+  protos.core.v1.ResponseStatus  status = 2;
+}
