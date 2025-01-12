@@ -104,9 +104,9 @@ export const RecordButton = () => {
             {formatTime(recordingTime)}
           </div>
         </div>
-        <button className="bg-gradient-to-r from-[#80bfff] to-[#738aff] hover:opacity-80 text-white font-bold px-6 py-1.5 rounded-md mb-4 hover:scale-105">
+        {/* <button className="bg-gradient-to-r from-[#80bfff] to-[#738aff] hover:opacity-80 text-white font-bold px-6 py-1.5 rounded-md mb-4 hover:scale-105">
           Stop Recording
-        </button>
+        </button> */}
       </div>
     </div>
   );

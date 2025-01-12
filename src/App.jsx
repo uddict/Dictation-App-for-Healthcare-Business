@@ -10,6 +10,7 @@ import Progress from "./pages/Progress";
 import Soap from "./pages/Soap";
 import RootLayout from "./layouts/RootLayout";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
     createRoutesFromElements(
       <>
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<RootLayout />}>
           <Route path="/user" element={<User />} loader={userLoader} />
           <Route index element={<Dictate />} />

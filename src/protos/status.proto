@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package protos.core.v1;
+
+message ResponseStatus {
+  int32 status =1;
+  string error_message =2;
+}

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package protos.speech.core.v2;
+
+message Audio {
+  bytes content = 1;
+  string uri = 2;
+}
+
+message AudioMetaData {
+  string lang = 1;
+  string domain = 2;
+}
+
+message RTTM {
+  float start_time =1;
+  float duration =2;
+  float end_time =3;
+  int32 speaker =4; 
+  repeated Silences silences =5;
+}
+
+message Silences {
+  float start_time =1;
+  float end_time =2;
+}

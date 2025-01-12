@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "protos/speech/core/v2/audio.proto";
+
+package protos.speech.core.v2.speech_to_text.v2;
+
+message AudioMessage {
+  Audio audio = 1;
+  AudioMetaData context = 2;
+  User user = 3;
+  Session session = 4;
+  int32 id =5;
+}
+
+message User {
+  string id = 1;
+}
+
+message Session {
+  string id = 1;
+  bool end = 2;
+}
+
+message SpeechToTextOutput {
+  AudioTranscription  transcription = 1;
+  int32 offset = 2;
+}
+
+message AudioTranscription {
+    string text = 1;
+}
